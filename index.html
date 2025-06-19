@@ -52,5 +52,52 @@
       document.getElementById('result').innerHTML = html;
     });
   </script>
+  
+  <script>
+const AIRTABLE_API_KEY = "pat0vRl9Y4v7MU6j1.778170fa7b4d9f0625debc2a99ce60ed22618860359fb7bbbb096b3dbb56c887";
+const BASE_ID = "appdtoF82WeGTaQHz";
+const PRICES_URL = `https://api.airtable.com/v0/${BASE_ID}/Prices`;
+const BUYERS_URL = `https://api.airtable.com/v0/${BASE_ID}/Buyers`;
+
+async function fetchCropData(crop, location) {
+  const headers = {
+    Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+  };
+
+  // 🔎 Fetch mandi price
+  const priceResp = await fetch(`${PRICES_URL}?filterByFormula=AND({Crop}='${crop}',{Location}='${location}')`, {
+    headers,
+  });
+  const priceData = await priceResp.json();
+  const mandiPrice = priceData.records[0]?.fields["Mandi Price"] || "N/A";
+
+  // 🔎 Fetch buyers
+  const buyerResp = await fetch(`${BUYERS_URL}?filterByFormula=AND({Crop}='${crop}',{Location}='${location}')`, {
+    headers,
+  });
+  const buyerData = await buyerResp.json();
+  const buyers = buyerData.records.map(r => r.fields);
+
+  return { mandiPrice, buyers };
+}
+
+document.getElementById('priceForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const crop = document.getElementById('crop').value;
+  const location = document.getElementById('location').value;
+
+  const { mandiPrice, buyers } = await fetchCropData(crop, location);
+
+  let html = `<p>📈 <strong>${crop}</strong> price in <strong>${location}</strong>: <strong>${mandiPrice}</strong></p><br>`;
+  html += `<p>✅ Verified Buyers:</p><ul>`;
+  buyers.forEach(b => {
+    html += `<li>${b.Name} – ${b["Price Offered"]} – 📞 ${b.Phone}</li>`;
+  });
+  html += `</ul><br><p>🌤️ Weather: Sunny 34°C</p>`;
+
+  document.getElementById('result').innerHTML = html;
+});
+</script>
+
 </body>
 </html>
