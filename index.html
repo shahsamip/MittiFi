@@ -1,0 +1,56 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MandiAlert</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss/dist/tailwind.min.css">
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body class="p-4 bg-green-50">
+  <h1 class="text-2xl font-bold mb-4">🌾 MandiAlert</h1>
+
+  <form id="priceForm" class="space-y-4">
+    <select id="crop" class="p-2 border rounded w-full">
+      <option>Tomato</option>
+      <option>Onion</option>
+      <option>Wheat</option>
+    </select>
+
+    <select id="location" class="p-2 border rounded w-full">
+      <option>Surat</option>
+      <option>Nashik</option>
+      <option>Ahmedabad</option>
+    </select>
+
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Get Price</button>
+  </form>
+
+  <div id="result" class="mt-6 bg-white p-4 rounded shadow"></div>
+
+  <script>
+    document.getElementById('priceForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const crop = document.getElementById('crop').value;
+      const location = document.getElementById('location').value;
+
+      // Simulated data — replace with real Airtable or Firebase fetch
+      const mandiPrice = "₹13.5/kg";
+      const buyers = [
+        { name: "Rajesh Traders", price: "₹14", phone: "98765xxxx" },
+        { name: "Hari Om Traders", price: "₹13.8", phone: "98765xxxx" }
+      ];
+
+      let html = `<p>📈 <strong>${crop}</strong> price in <strong>${location}</strong>: <strong>${mandiPrice}</strong></p><br>`;
+      html += `<p>✅ Verified Buyers:</p><ul>`;
+      buyers.forEach(b => {
+        html += `<li>${b.name} – ${b.price}/kg – 📞 ${b.phone}</li>`;
+      });
+      html += `</ul><br><p>🌤️ Weather: Sunny, 34°C</p>`;
+
+      document.getElementById('result').innerHTML = html;
+    });
+  </script>
+</body>
+</html>
